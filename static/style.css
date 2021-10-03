@@ -2,7 +2,15 @@ html {
     background-color: #111;
     color: white;
     font-family: 'Lato', sans-serif;
-    font-size: 16pt;
+    font-size: 2vh;
+}
+
+a::before {
+    content: "🔗";
+}
+
+a {
+    color: #40b08d;
 }
 
 .fieldsetlogin {
@@ -15,4 +23,9 @@ input {
     color: white;
     font-family: 'Lato', sans-serif;
     font-size: 16pt;
+}
+
+th {
+    border: 1px solid #333;
+    padding: 8px;
 }

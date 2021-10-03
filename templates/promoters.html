@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" 
+            rel="stylesheet"> 
+    </head>
+    <body>
+        <h1>
+            Lista de promotores
+        </h1>
+        <table>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Cadena</th>
+                <th>Ciudad</th>
+            </tr>
+            {%for promoter in promoters%}
+            <tr>
+                {%for i,column in enumerate(promoter)%}
+                <th>
+                    {%if i==0%}
+                    <a href="/viewpromoter/{{column}}">
+                    {%endif%}
+                    {{column}}
+                    {%if i==0%}
+                    </a>
+                    {%endif%}
+                </th>
+                {%endfor%}
+            </tr>
+            {%endfor%}
+        </table>
+    </body>
+</html>
