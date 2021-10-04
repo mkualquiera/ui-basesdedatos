@@ -100,3 +100,16 @@ def get_personal_info(id):
     CURSOR.execute("SELECT * FROM personal_info WHERE infoid = %s",(id,));
     result = CURSOR.fetchall();
     return result[0]
+
+@database_mutator
+def register_subject(name):
+    CURSOR.execute(("INSERT INTO subject (subjectname) VALUES (%s);"
+        "SELECT LAST_INSERT_ID();"), (name,))
+    CURSOR.nextset()
+    ((subject_name,),) = CURSOR.fetchall()
+    return subject_name
+
+@database_mutator
+def register_trainer_subject(trainer_id,subject_id):
+    CURSOR.execute(("INSERT INTO trainer_has_subject (trainerinfoid,subjectid)"
+        "VALUES (%s, %s)"), (trainer_id,subject_id))
