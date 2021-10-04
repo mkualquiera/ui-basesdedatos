@@ -113,3 +113,25 @@ def register_subject(name):
 def register_trainer_subject(trainer_id,subject_id):
     CURSOR.execute(("INSERT INTO trainer_has_subject (trainerinfoid,subjectid)"
         "VALUES (%s, %s)"), (trainer_id,subject_id))
+
+
+@database_mutator
+def register_capacitation(promoter_id, trainer_id, date, subject_id):
+    CURSOR.execute(("INSERT INTO capacitation (capacitationpromoterinfoid,"
+        "capacitationtrainerinfoid,capacitationdate,capacitationsubjectid) "
+        "VALUES (%s, %s, %s, %s);"
+        "SELECT LAST_INSERT_ID();"), (promoter_id,trainer_id,date,subject_id))
+    CURSOR.nextset()
+    ((subject_name,),) = CURSOR.fetchall()
+    return subject_name
+
+
+@database_mutator
+def register_evaluation(promoter_id, supervisor_id, date, comments):
+    CURSOR.execute(("INSERT INTO capacitation (evaluationsupervisorinfoid,"
+        "evaluationpromoterinfoid,evaluationdate,evaluationcomments) "
+        "VALUES (%s, %s, %s, %s);"
+        "SELECT LAST_INSERT_ID();"), (supervisor_id,promoter_id,date,comments))
+    CURSOR.nextset()
+    ((subject_name,),) = CURSOR.fetchall()
+    return subject_name
