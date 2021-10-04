@@ -94,7 +94,7 @@ def test_db():
 
     for sid in supervisor_ids:
         register_personal_info(sid,gen_person_name(),gen_phone())
-        register_supervisor(sid,random.choice(chains))
+        register_supervisor(sid)
 
     trainer_ids = list(set([ gen_id() for i in range(30) ]))
 

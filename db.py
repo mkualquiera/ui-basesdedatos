@@ -70,9 +70,9 @@ def register_promotor(id,pos_id):
         "VALUES (%s, %s)"), (id, pos_id))
 
 @database_mutator
-def register_supervisor(id,chain_id):
-    CURSOR.execute(("INSERT INTO supervisor (supervisorinfoid,supervisorchainid)"
-        "VALUES (%s, %s)"), (id, chain_id))
+def register_supervisor(id):
+    CURSOR.execute(("INSERT INTO supervisor (supervisorinfoid)"
+        "VALUES (%s, %s)"), (id))
 
 @database_mutator
 def register_trainer(id):
