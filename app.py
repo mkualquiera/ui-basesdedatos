@@ -4,18 +4,18 @@ import db
 
 app = Flask(__name__)
 
-@app.route("/viewpromoter/<id>")
+@app.route("/viewagent/<id>")
 def viewpromotor(id):
-    return render_template("promoter.html",
+    return render_template("agent.html",
         personal_info=db.get_personal_info(id),
-        capacitations=db.get_promoter_capacitations(id),
-        comments=db.get_promoter_comments(id),
-        pos_info=db.get_promoter_pos_info(id))
+        trainings=db.get_agent_trainings(id),
+        comments=db.get_agent_comments(id),
+        pos_info=db.get_agent_pos_info(id))
 
 @app.route("/")
 def index():
-    return render_template("promoters.html", 
-        promoters=db.get_all_promotor_list(),enumerate=enumerate)
+    return render_template("agents.html", 
+        agents=db.get_all_promotor_list(),enumerate=enumerate)
 
 if __name__ == "__main__":
     # Start application on all interfaces, on port 81.

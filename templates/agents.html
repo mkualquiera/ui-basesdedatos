@@ -21,12 +21,12 @@
                 <th>Cadena</th>
                 <th>Ciudad</th>
             </tr>
-            {%for promoter in promoters%}
+            {%for agent in agents%}
             <tr>
-                {%for i,column in enumerate(promoter)%}
+                {%for i,column in enumerate(agent)%}
                 <th>
                     {%if i==0%}
-                    <a href="/viewpromoter/{{column}}">
+                    <a href="/viewagent/{{column}}">
                     {%endif%}
                     {{column}}
                     {%if i==0%}

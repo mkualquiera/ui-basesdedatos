@@ -22,7 +22,7 @@ def database_accesor(fun):
 DB_HOST = "localhost"
 DB_USER = "root"
 DB_PASSWORD = "root"
-DB_NAME = "promoterdb"
+DB_NAME = "agentdb"
 
 DATABASE = mysql.connector.connect(
     host=DB_HOST,
@@ -66,7 +66,7 @@ def register_personal_info(id,name,phone):
     
 @database_mutator
 def register_promotor(id,pos_id):
-    CURSOR.execute(("INSERT INTO promoter (promoterinfoid,promoterposid)"
+    CURSOR.execute(("INSERT INTO agent (agentinfoid,agentposid)"
         "VALUES (%s, %s)"), (id, pos_id))
 
 @database_mutator
@@ -87,9 +87,9 @@ def get_all_user_data():
 @database_accesor
 def get_all_promotor_list():
     CURSOR.execute("""
-    SELECT infoid,infoname,infophone,chainname,cityname FROM promoter 
-    INNER JOIN personal_info ON promoter.promoterinfoid = personal_info.infoid
-    INNER JOIN pos ON promoter.promoterposid = pos.posid
+    SELECT infoid,infoname,infophone,chainname,cityname FROM agent 
+    INNER JOIN personal_info ON agent.agentinfoid = personal_info.infoid
+    INNER JOIN pos ON agent.agentposid = pos.posid
     INNER JOIN city ON pos.poscityid = city.cityid
     INNER JOIN chain ON pos.poschainid = chain.chainid;
     """);
@@ -102,68 +102,68 @@ def get_personal_info(id):
     return result[0]
 
 @database_mutator
-def register_subject(name):
-    CURSOR.execute(("INSERT INTO subject (subjectname) VALUES (%s);"
+def register_topic(name):
+    CURSOR.execute(("INSERT INTO topic (topicname) VALUES (%s);"
         "SELECT LAST_INSERT_ID();"), (name,))
     CURSOR.nextset()
-    ((subject_name,),) = CURSOR.fetchall()
-    return subject_name
+    ((topic_name,),) = CURSOR.fetchall()
+    return topic_name
 
 @database_mutator
-def register_trainer_subject(trainer_id,subject_id):
-    CURSOR.execute(("INSERT INTO trainer_has_subject (trainerinfoid,subjectid)"
-        "VALUES (%s, %s)"), (trainer_id,subject_id))
+def register_trainer_topic(trainer_id,topic_id):
+    CURSOR.execute(("INSERT INTO trainer_has_topic (trainerinfoid,topicid)"
+        "VALUES (%s, %s)"), (trainer_id,topic_id))
 
 
 @database_mutator
-def register_capacitation(promoter_id, trainer_id, date, subject_id, grade):
-    CURSOR.execute(("INSERT INTO capacitation (capacitationpromoterinfoid,"
-        "capacitationtrainerinfoid,capacitationdate,capacitationsubjectid,"
-        "capacitationgrade) "
+def register_training(agent_id, trainer_id, date, topic_id, grade):
+    CURSOR.execute(("INSERT INTO training (trainingagentinfoid,"
+        "trainingtrainerinfoid,trainingdate,trainingtopicid,"
+        "traininggrade) "
         "VALUES (%s, %s, %s, %s, %s);"
-        "SELECT LAST_INSERT_ID();"), (promoter_id,trainer_id,date,subject_id,
+        "SELECT LAST_INSERT_ID();"), (agent_id,trainer_id,date,topic_id,
             grade))
     CURSOR.nextset()
-    ((subject_name,),) = CURSOR.fetchall()
-    return subject_name
+    ((topic_name,),) = CURSOR.fetchall()
+    return topic_name
 
 
 @database_mutator
-def register_evaluation(promoter_id, supervisor_id, date, comments):
+def register_evaluation(agent_id, supervisor_id, date, comments):
     CURSOR.execute(("INSERT INTO evaluation (evaluationsupervisorinfoid,"
-        "evaluationpromoterinfoid,evaluationdate,evaluationcomments) "
+        "evaluationagentinfoid,evaluationdate,evaluationcomments) "
         "VALUES (%s, %s, %s, %s);"
-        "SELECT LAST_INSERT_ID();"), (supervisor_id,promoter_id,date,comments))
+        "SELECT LAST_INSERT_ID();"), (supervisor_id,agent_id,date,comments))
     CURSOR.nextset()
-    ((subject_name,),) = CURSOR.fetchall()
-    return subject_name
+    ((topic_name,),) = CURSOR.fetchall()
+    return topic_name
 
 @database_accesor
-def get_promoter_capacitations(promoter_id):
-    CURSOR.execute(("SELECT subjectname,capacitationgrade,capacitationdate,"
-        "infoname FROM capacitation "
+def get_agent_trainings(agent_id):
+    CURSOR.execute(("SELECT topicname,traininggrade,trainingdate,"
+        "infoname FROM training "
         "INNER JOIN personal_info ON personal_info.infoid = "
-        "capacitation.capacitationtrainerinfoid "
-        "INNER JOIN subject ON subject.subjectid = "
-        "capacitation.capacitationsubjectid "
-        "WHERE capacitationpromoterinfoid = (%s);"), (promoter_id,))
+        "training.trainingtrainerinfoid "
+        "INNER JOIN topic ON topic.topicid = "
+        "training.trainingtopicid "
+        "WHERE trainingagentinfoid = (%s);"), (agent_id,))
     return CURSOR.fetchall()
 
 @database_accesor
-def get_promoter_comments(promoter_id):
+def get_agent_comments(agent_id):
     CURSOR.execute(("SELECT evaluationcomments,evaluationdate,infoname "
         "FROM evaluation INNER JOIN personal_info ON "
         "evaluation.evaluationsupervisorinfoid = personal_info.infoid "
-        "WHERE evaluationpromoterinfoid = (%s);"), (promoter_id,))
+        "WHERE evaluationagentinfoid = (%s);"), (agent_id,))
     return CURSOR.fetchall()
 
 @database_accesor
-def get_promoter_pos_info(promoter_id):
-    CURSOR.execute(("SELECT chainname,cityname,posaddress FROM promoter "
-        "INNER JOIN pos ON pos.posid = promoter.promoterposid "
+def get_agent_pos_info(agent_id):
+    CURSOR.execute(("SELECT chainname,cityname,posaddress FROM agent "
+        "INNER JOIN pos ON pos.posid = agent.agentposid "
         "INNER JOIN city ON pos.poscityid = city.cityid "
         "INNER JOIN chain ON pos.poschainid = chain.chainid "
-        "WHERE promoterinfoid = (%s);"), (promoter_id,))
+        "WHERE agentinfoid = (%s);"), (agent_id,))
     return CURSOR.fetchall()[0]
 
 
