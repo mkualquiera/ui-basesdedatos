@@ -48,6 +48,7 @@
                     <th>Nota</th>
                     <th>Fecha</th>
                     <th>Entrenador</th>
+                    <th>Acción</th>
                 </tr>
                 {%for training in trainings%}
                     <tr>
@@ -56,22 +57,40 @@
                         {{column}}
                     </th>
                     {%endfor%}
+                    <th></th>
                     </tr>
                 {%endfor%}
                 <form>
                 <tr>
                     <th>
-                        <select id="topic" name="topic"></select>
+                        <select id="topic" name="topic">
+                            {%for (topicid,topicname) in topics%}
+                                <option value="{{topicid}}">
+                                    {{topicname}}
+                                </option>
+                            {%endfor%}
+                        </select>
                     </th>
                     <th>
                         <input id="grade" name="grade" type="number"
-                        min="1" max="5" style="width: 40pt;">
+                        min="1" max="5" style="width: 40pt;" value=3>
                     </th>
                     <th>
-                        <input id="date" name="date" type="date">
+                        <input id="date" name="date" type="date" 
+                            value="2021-10-05">
                     </th>
                     <th>
-                        <select id="trainer" name="trainer"></select>
+                        <select id="trainer" name="trainer">
+                            {%for (trainerid,trainername) in trainers%}
+                                <option value="{{trainerid}}">
+                                    {{trainername}}
+                                </option>
+                            {%endfor%}
+                        </select>
+                    </th>
+                    <th>
+                        <input type="submit" name="submittraining" 
+                            value="Registrar">
                     </th>
                 </tr>
                 </form>

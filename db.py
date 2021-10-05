@@ -100,12 +100,19 @@ def get_all_agent_list():
 @database_accesor
 def get_cities_list():
     CURSOR.execute("SELECT * FROM city")
-    return CURSOR.fetchall();
+    return CURSOR.fetchall()
 
 @database_accesor
 def get_topic_list():
     CURSOR.execute("SELECT * FROM topic")
-    return CURSOR.fetchall();
+    return CURSOR.fetchall()
+
+@database_accesor
+def get_trainer_list():
+    CURSOR.execute(("SELECT trainerinfoid,infoname FROM trainer "
+        "INNER JOIN personal_info on trainer.trainerinfoid = "
+        "personal_info.infoid;"))
+    return CURSOR.fetchall()
 
 @database_accesor
 def get_chains_in_city(cityid):
@@ -113,7 +120,7 @@ def get_chains_in_city(cityid):
         "INNER JOIN city ON city.cityid = pos.poscityid "
         "INNER JOIN chain ON chain.chainid = pos.poschainid "
         "WHERE poscityid=(%s);"),(cityid,))
-    return CURSOR.fetchall();
+    return CURSOR.fetchall()
 
 @database_accesor
 def get_pos_in_chain_city(cityid,chainid):
@@ -127,7 +134,7 @@ def get_pos_in_chain_city(cityid,chainid):
 @database_accesor
 def get_personal_info(id):
     CURSOR.execute("SELECT * FROM personal_info WHERE infoid = %s",(id,));
-    result = CURSOR.fetchall();
+    result = CURSOR.fetchall()
     return result[0]
 
 @database_mutator

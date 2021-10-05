@@ -1,4 +1,5 @@
 
+import re
 from flask import Flask, render_template, jsonify, request, redirect
 import db
 
@@ -36,11 +37,25 @@ def register_agent():
 
 @app.route("/viewagent/<id>")
 def view_agent(id):
-    return render_template("agent.html",
-        personal_info=db.get_personal_info(id),
-        trainings=db.get_agent_trainings(id),
-        comments=db.get_agent_comments(id),
-        pos_info=db.get_agent_pos_info(id))
+    if len(request.args) == 0:
+        return render_template("agent.html",
+            personal_info=db.get_personal_info(id),
+            trainings=db.get_agent_trainings(id),
+            comments=db.get_agent_comments(id),
+            pos_info=db.get_agent_pos_info(id),
+            topics=db.get_topic_list(),
+            trainers=db.get_trainer_list())
+    else:
+        submittraining = request.args.get("submittraining")
+        if submittraining == "Registrar":
+            db.register_training(
+                id,
+                request.args.get("trainer"),
+                request.args.get("date"),
+                request.args.get("topic"),
+                request.args.get("grade")
+            )
+        return redirect(f"/viewagent/{id}")
 
 @app.route("/")
 def index():
