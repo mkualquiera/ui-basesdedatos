@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" 
+            rel="stylesheet"> 
+        <script src="/static/api.js"></script>
+    </head>
+    <body>
+        <h1>
+            Registrar promotor
+        </h1>
+        <form>
+            <label for="city">Ciudad:</label> <br>
+            <select name="city" id="city" onchange="citySelected()"></select> 
+            <br>
+
+            <label for="chain">Cadena:</label> <br>
+            <select name="chain" id="chain" onchange="chainSelected()"></select> 
+            <br>
+
+            <label for="address">Dirección:</label> <br>
+            <select name="address" id="address"></select> <br>
+
+            <label for="agentid">Cédula:</label> <br>
+            <input type="text" name="agentid" id="agentid"> <br>
+
+            <label for="agentname">Nombre:</label> <br>
+            <input type="text" name="agentname" id="agentname"> <br>
+
+            <label for="agentphone">Teléfono:</label> <br>
+            <input type="text" name="agentphone" id="agentphone"> <br> <br>
+
+            <input type="submit" name="submit" value="Registrar">
+        </form>
+    </body>
+    <script type="application/javascript">
+
+        citySelect = document.getElementById("city");
+        chainSelect = document.getElementById("chain");
+        addressSelect = document.getElementById("address");
+
+        // Populate cities select
+        getCities((error,data) => {
+            if (error == null) {
+                innerResult = ""
+                for (var i in data) {
+                    innerResult += '<option value ="' + data[i].id + '">' +
+                        data[i].name + "</option>"
+                }
+                citySelect.innerHTML = innerResult;
+                citySelected();
+            } else {
+                console.log(error);
+            }
+        });
+
+        function citySelected() {
+            getCityChains(citySelect.value,(error,data) => {
+                if (error == null) {
+                    innerResult = ""
+                    for (var i in data) {
+                        innerResult += '<option value ="' + data[i].id + '">' +
+                            data[i].name + "</option>"
+                    }
+                    chainSelect.innerHTML = innerResult;
+                    chainSelected();
+                } else {
+                    console.log(error);
+                }
+            })
+        }
+
+        function chainSelected() {
+            getCityChainPos(citySelect.value,chainSelect.value,(error,data) => {
+                if (error == null) {
+                    innerResult = ""
+                    for (var i in data) {
+                        innerResult += '<option value ="' + data[i].id + '">' +
+                            data[i].name + "</option>"
+                    }
+                    addressSelect.innerHTML = innerResult;
+                } else {
+                    console.log(error);
+                }
+            })
+        }
+        
+    </script>
+</html>

@@ -1,6 +1,7 @@
 from math import radians
 from os import name,system
 import mysql.connector
+from mysql.connector import cursor
 
 def database_mutator(fun):
     def result(*argv,**kwargs):
@@ -32,7 +33,8 @@ DATABASE = mysql.connector.connect(
 )
 
 def init_database(filename):
-    system(f"mysql --host={DB_HOST} --user={DB_USER} --password={DB_PASSWORD} {DB_NAME} < {filename}")
+    system(f"mysql --host={DB_HOST} --user={DB_USER} --password={DB_PASSWORD} \
+         {DB_NAME} < {filename}")
 
 @database_mutator
 def register_city(name):
@@ -65,7 +67,7 @@ def register_personal_info(id,name,phone):
         "VALUES (%s, %s, %s)"), (id, name, phone))
     
 @database_mutator
-def register_promotor(id,pos_id):
+def register_agent(id,pos_id):
     CURSOR.execute(("INSERT INTO agent (agentinfoid,agentposid)"
         "VALUES (%s, %s)"), (id, pos_id))
 
@@ -85,7 +87,7 @@ def get_all_user_data():
     return CURSOR.fetchall()
 
 @database_accesor
-def get_all_promotor_list():
+def get_all_agent_list():
     CURSOR.execute("""
     SELECT infoid,infoname,infophone,chainname,cityname FROM agent 
     INNER JOIN personal_info ON agent.agentinfoid = personal_info.infoid
@@ -94,6 +96,33 @@ def get_all_promotor_list():
     INNER JOIN chain ON pos.poschainid = chain.chainid;
     """);
     return CURSOR.fetchall()
+
+@database_accesor
+def get_cities_list():
+    CURSOR.execute("SELECT * FROM city")
+    return CURSOR.fetchall();
+
+@database_accesor
+def get_topic_list():
+    CURSOR.execute("SELECT * FROM topic")
+    return CURSOR.fetchall();
+
+@database_accesor
+def get_chains_in_city(cityid):
+    CURSOR.execute(("SELECT DISTINCT(chainid),chainname FROM pos "
+        "INNER JOIN city ON city.cityid = pos.poscityid "
+        "INNER JOIN chain ON chain.chainid = pos.poschainid "
+        "WHERE poscityid=(%s);"),(cityid,))
+    return CURSOR.fetchall();
+
+@database_accesor
+def get_pos_in_chain_city(cityid,chainid):
+    CURSOR.execute(("SELECT posid,posaddress FROM pos "
+        "INNER JOIN city ON city.cityid = pos.poscityid "
+        "INNER JOIN chain ON chain.chainid = pos.poschainid "
+        "WHERE poscityid=(%s) AND chainid=(%s);"), (cityid,chainid))
+    return CURSOR.fetchall()
+
 
 @database_accesor
 def get_personal_info(id):

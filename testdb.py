@@ -133,7 +133,7 @@ def test_db():
 
     for pid in agent_ids:
         register_personal_info(pid,gen_person_name(),gen_phone())
-        register_promotor(pid,random.choice(posi))
+        register_agent(pid,random.choice(posi))
 
     supervisor_ids = list(set([ gen_id() for i in range(30) ]))
 
