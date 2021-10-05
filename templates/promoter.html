@@ -35,12 +35,15 @@
                     <th>Fecha</th>
                     <th>Entrenador</th>
                 </tr>
-                <tr>
-                    <th>Iphone 400</th>
-                    <th>4</th>
-                    <th>02/10/2021</th>
-                    <th>Roberto Herrera</th>
-                </tr>
+                {%for capacitation in capacitations%}
+                    <tr>
+                    {%for column in capacitation%}
+                    <th>
+                        {{column}}
+                    </th>
+                    {%endfor%}
+                    </tr>
+                {%endfor%}
             </table>
         </div>
         <div>

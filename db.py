@@ -72,7 +72,7 @@ def register_promotor(id,pos_id):
 @database_mutator
 def register_supervisor(id):
     CURSOR.execute(("INSERT INTO supervisor (supervisorinfoid)"
-        "VALUES (%s, %s)"), (id))
+        "VALUES (%s)"), (id,))
 
 @database_mutator
 def register_trainer(id):
@@ -116,11 +116,13 @@ def register_trainer_subject(trainer_id,subject_id):
 
 
 @database_mutator
-def register_capacitation(promoter_id, trainer_id, date, subject_id):
+def register_capacitation(promoter_id, trainer_id, date, subject_id, grade):
     CURSOR.execute(("INSERT INTO capacitation (capacitationpromoterinfoid,"
-        "capacitationtrainerinfoid,capacitationdate,capacitationsubjectid) "
-        "VALUES (%s, %s, %s, %s);"
-        "SELECT LAST_INSERT_ID();"), (promoter_id,trainer_id,date,subject_id))
+        "capacitationtrainerinfoid,capacitationdate,capacitationsubjectid,"
+        "capacitationgrade) "
+        "VALUES (%s, %s, %s, %s, %s);"
+        "SELECT LAST_INSERT_ID();"), (promoter_id,trainer_id,date,subject_id,
+            grade))
     CURSOR.nextset()
     ((subject_name,),) = CURSOR.fetchall()
     return subject_name
@@ -135,3 +137,20 @@ def register_evaluation(promoter_id, supervisor_id, date, comments):
     CURSOR.nextset()
     ((subject_name,),) = CURSOR.fetchall()
     return subject_name
+
+@database_accesor
+def get_promoter_capacitations(promoter_id):
+    CURSOR.execute(("SELECT subjectname,capacitationgrade,capacitationdate,"
+        "infoname FROM capacitation "
+        "INNER JOIN personal_info ON personal_info.infoid = "
+        "capacitation.capacitationtrainerinfoid "
+        "INNER JOIN subject ON subject.subjectid = "
+        "capacitation.capacitationsubjectid "
+        "WHERE capacitationpromoterinfoid = (%s);"), (promoter_id,))
+    return CURSOR.fetchall()
+    
+
+@database_accesor
+def get_ids():
+    CURSOR.execute("SELECT (infoid) FROM personal_info;")
+    return CURSOR.fetchall()

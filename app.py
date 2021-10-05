@@ -6,8 +6,9 @@ app = Flask(__name__)
 
 @app.route("/viewpromoter/<id>")
 def viewpromotor(id):
-    personal_info = db.get_personal_info(id)
-    return render_template("promoter.html",personal_info=personal_info)
+    return render_template("promoter.html",
+        personal_info=db.get_personal_info(id),
+        capacitations=db.get_promoter_capacitations(id))
 
 @app.route("/")
 def index():

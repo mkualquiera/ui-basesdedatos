@@ -1,23 +1,26 @@
 from db import *
 import random
+import datetime
+from dateutil.relativedelta import relativedelta
 
+VOWELS = "aeiou"
+CONSONANTS = "bcdfghjklmnpqrstvwxyzñ"
 
 def gen_name(namelen=None,openness=0.5,closureness=0.5,germanness=0.0):
     if namelen == None:
         namelen = random.randint(3,6)
-    vowels = "aeiou"
-    consonants = "bcdfghjklmnpqrstvwxyzñ"
+    
     result = ""
     for i in range(namelen):
         if random.random() < germanness:
-            result += random.choice(consonants)
+            result += random.choice(CONSONANTS)
         elif random.random() < openness:
-            result += random.choice(vowels)
+            result += random.choice(VOWELS)
         else:
-            result += random.choice(consonants)
-            result += random.choice(vowels)
+            result += random.choice(CONSONANTS)
+            result += random.choice(VOWELS)
     if random.random() < closureness:
-        result += random.choice(consonants)
+        result += random.choice(CONSONANTS)
     return result
 
 def fix_name_casing(name):
@@ -65,6 +68,25 @@ def gen_phone():
         phone += str(random.randint(0,9))
     return phone
 
+PRODUCTS = ["Clock", "Phone", "Pad", "Connector", "Laptop", "Pod", "Player"]
+
+MARKETIVES = [" Plus", " Omega", " X", " Power", " Smart", " Super", 
+    " Retro", " Future", " Instant", "", "", ""]
+
+def gen_subject():
+    result = ""
+    if random.random() < 0.4:
+        result += random.choice(VOWELS)
+    if random.random() < 0.3:
+        result += random.choice(PRODUCTS)
+    else:
+        result += fix_name_casing(gen_name(namelen=4,openness=0.7,
+            closureness=0.2,germanness=0.2))
+    result += random.choice(MARKETIVES)
+    if random.random() < 0.5:
+        result += " " + str(random.randint(2,20))
+    return result
+
 ADDR_TYPES = ["Carrera","Calle","Diagonal","Transversal","Avenida"]    
 ADDR_SUFFIXES = ["","","","","","","A","B","C","D","AA","DD"]    
 ADDR_CARDINALITY = ["","","","","",""," Norte"," Sur"]
@@ -75,6 +97,14 @@ def gen_addr():
         random.choice(ADDR_CARDINALITY) + " #" + str(random.randint(1,120)) + 
         random.choice(ADDR_SUFFIXES) + "-" + str(random.randint(1,300)))
     return addr
+
+def random_date(start, end):
+    return (start + datetime.timedelta(
+        # Get a random amount of seconds between `start` and `end`
+        seconds=random.randint(0, int((end - start).total_seconds())),
+    )).date().isoformat()
+
+
 
 def test_db():
     init_database("forwardeng.sql")
@@ -98,6 +128,22 @@ def test_db():
 
     trainer_ids = list(set([ gen_id() for i in range(30) ]))
 
+    subject_ids = [ register_subject(gen_subject()) for i in range(40) ]
+
     for tid in trainer_ids:
         register_personal_info(tid,gen_person_name(),gen_phone())
         register_trainer(tid)
+
+        trainer_subjects = list(set([ random.choice(subject_ids) for i in 
+            range(random.randint(1,5))]))
+        
+        for subject_id in trainer_subjects:
+            register_trainer_subject(tid, subject_id)
+
+        for i in range(random.randint(0,15)):
+            promoter_id = random.choice(promoter_ids)
+            register_capacitation(promoter_id,tid,
+                random_date(datetime.datetime.now()-relativedelta(years=10),
+                datetime.datetime.now()),random.choice(trainer_subjects),
+                random.randint(1,5))
+
