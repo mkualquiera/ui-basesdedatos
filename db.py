@@ -115,6 +115,13 @@ def get_trainer_list():
     return CURSOR.fetchall()
 
 @database_accesor
+def get_supervisor_list():
+    CURSOR.execute(("SELECT supervisorinfoid,infoname FROM supervisor "
+        "INNER JOIN personal_info on supervisor.supervisorinfoid = "
+        "personal_info.infoid;"))
+    return CURSOR.fetchall()
+
+@database_accesor
 def get_chains_in_city(cityid):
     CURSOR.execute(("SELECT DISTINCT(chainid),chainname FROM pos "
         "INNER JOIN city ON city.cityid = pos.poscityid "

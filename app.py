@@ -44,9 +44,11 @@ def view_agent(id):
             comments=db.get_agent_comments(id),
             pos_info=db.get_agent_pos_info(id),
             topics=db.get_topic_list(),
-            trainers=db.get_trainer_list())
+            trainers=db.get_trainer_list(),
+            supervisors=db.get_supervisor_list())
     else:
         submittraining = request.args.get("submittraining")
+        submitcomments = request.args.get("submitcomments")
         if submittraining == "Registrar":
             db.register_training(
                 id,
@@ -55,6 +57,10 @@ def view_agent(id):
                 request.args.get("topic"),
                 request.args.get("grade")
             )
+        if submitcomments == "Registrar":
+            print("registrados")
+            db.register_evaluation(id, request.args.get("supervisor"), 
+                request.args.get("date"),request.args.get("comment"))
         return redirect(f"/viewagent/{id}")
 
 @app.route("/")
