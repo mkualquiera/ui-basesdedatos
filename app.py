@@ -8,7 +8,8 @@ app = Flask(__name__)
 def viewpromotor(id):
     return render_template("promoter.html",
         personal_info=db.get_personal_info(id),
-        capacitations=db.get_promoter_capacitations(id))
+        capacitations=db.get_promoter_capacitations(id),
+        comments=db.get_promoter_comments(id))
 
 @app.route("/")
 def index():

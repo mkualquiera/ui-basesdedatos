@@ -130,7 +130,7 @@ def register_capacitation(promoter_id, trainer_id, date, subject_id, grade):
 
 @database_mutator
 def register_evaluation(promoter_id, supervisor_id, date, comments):
-    CURSOR.execute(("INSERT INTO capacitation (evaluationsupervisorinfoid,"
+    CURSOR.execute(("INSERT INTO evaluation (evaluationsupervisorinfoid,"
         "evaluationpromoterinfoid,evaluationdate,evaluationcomments) "
         "VALUES (%s, %s, %s, %s);"
         "SELECT LAST_INSERT_ID();"), (supervisor_id,promoter_id,date,comments))
@@ -148,7 +148,14 @@ def get_promoter_capacitations(promoter_id):
         "capacitation.capacitationsubjectid "
         "WHERE capacitationpromoterinfoid = (%s);"), (promoter_id,))
     return CURSOR.fetchall()
-    
+
+@database_accesor
+def get_promoter_comments(promoter_id):
+    CURSOR.execute(("SELECT evaluationcomments,evaluationdate,infoname "
+        "FROM evaluation INNER JOIN personal_info ON "
+        "evaluation.evaluationsupervisorinfoid = personal_info.infoid "
+        "WHERE evaluationpromoterinfoid = (%s);"), (promoter_id,))
+    return CURSOR.fetchall()    
 
 @database_accesor
 def get_ids():

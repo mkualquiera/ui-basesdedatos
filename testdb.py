@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 VOWELS = "aeiou"
 CONSONANTS = "bcdfghjklmnpqrstvwxyzñ"
 
-def gen_name(namelen=None,openness=0.5,closureness=0.5,germanness=0.0):
+def gen_text(namelen=None,openness=0.5,closureness=0.5,germanness=0.0):
     if namelen == None:
         namelen = random.randint(3,6)
     
@@ -35,7 +35,7 @@ CITY_SUFFIXES = [" de Cristo", " del Rosario", " del Señor", " del Evangelio",
 
 def gen_city_name():
     name = random.choice(CITY_PREFIXES) \
-        + fix_name_casing(gen_name(openness=0.1,closureness=0.1)) \
+        + fix_name_casing(gen_text(openness=0.1,closureness=0.1)) \
         + random.choice(CITY_SUFFIXES)
     return fix_name_casing(name)
 
@@ -43,12 +43,12 @@ CHAIN_SUFFIXES = [" Tech", " S.A.", "studios", " Electronics",
     " International", " United", "ify", "", "", "", ""]
 
 def gen_chain_name():
-    name = gen_name(openness=0.7,closureness=0.1,germanness=0.3) \
+    name = gen_text(openness=0.7,closureness=0.1,germanness=0.3) \
         + random.choice(CHAIN_SUFFIXES)
     return fix_name_casing(name)
 
 def gen_person_name():
-    names = [ fix_name_casing(gen_name(openness=0.2,germanness=0.1,
+    names = [ fix_name_casing(gen_text(openness=0.2,germanness=0.1,
         closureness=0.2,namelen=random.randint(2,4))) for i in range(4) ]
     result = names[0]
     for name in names[1:]:
@@ -68,7 +68,8 @@ def gen_phone():
         phone += str(random.randint(0,9))
     return phone
 
-PRODUCTS = ["Clock", "Phone", "Pad", "Connector", "Laptop", "Pod", "Player"]
+PRODUCTS = ["Clock", "Phone", "Pad", "Reader", "Laptop", "Pod", "Player", 
+    "Notebook"]
 
 MARKETIVES = [" Plus", " Omega", " X", " Power", " Smart", " Super", 
     " Retro", " Future", " Instant", "", "", ""]
@@ -80,7 +81,7 @@ def gen_subject():
     if random.random() < 0.3:
         result += random.choice(PRODUCTS)
     else:
-        result += fix_name_casing(gen_name(namelen=4,openness=0.7,
+        result += fix_name_casing(gen_text(namelen=4,openness=0.7,
             closureness=0.2,germanness=0.2))
     result += random.choice(MARKETIVES)
     if random.random() < 0.5:
@@ -98,19 +99,29 @@ def gen_addr():
         random.choice(ADDR_SUFFIXES) + "-" + str(random.randint(1,300)))
     return addr
 
-def random_date(start, end):
+def random_date(start=None, end=None):
+    if start == None:
+        start = datetime.datetime.now()-relativedelta(years=10)
+    if end == None:
+        end = datetime.datetime.now()
     return (start + datetime.timedelta(
         # Get a random amount of seconds between `start` and `end`
         seconds=random.randint(0, int((end - start).total_seconds())),
     )).date().isoformat()
 
-
+def gen_comment():
+    result = gen_text()
+    for i in range(random.randint(10,20)):
+        result += " " + gen_text(random.randint(1,5),germanness=0.2)
+    result += "."
+    return fix_name_casing(result)
 
 def test_db():
     init_database("forwardeng.sql")
 
     cities = [ register_city(gen_city_name()) for i in range(5) ]
     chains = [ register_chain(gen_chain_name()) for i in range(10) ] 
+
     posi = [ register_pos(random.choice(chains),random.choice(cities),
         gen_addr()) for i in range(30) ]
     
@@ -125,6 +136,9 @@ def test_db():
     for sid in supervisor_ids:
         register_personal_info(sid,gen_person_name(),gen_phone())
         register_supervisor(sid)
+        for i in range(random.randint(0,17)):
+            promoter_id = random.choice(promoter_ids)
+            register_evaluation(promoter_id, sid, random_date(), gen_comment())
 
     trainer_ids = list(set([ gen_id() for i in range(30) ]))
 
@@ -140,10 +154,9 @@ def test_db():
         for subject_id in trainer_subjects:
             register_trainer_subject(tid, subject_id)
 
-        for i in range(random.randint(0,15)):
+        for i in range(random.randint(0,17)):
             promoter_id = random.choice(promoter_ids)
             register_capacitation(promoter_id,tid,
-                random_date(datetime.datetime.now()-relativedelta(years=10),
-                datetime.datetime.now()),random.choice(trainer_subjects),
+                random_date(),random.choice(trainer_subjects),
                 random.randint(1,5))
 

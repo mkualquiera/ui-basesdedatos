@@ -56,11 +56,15 @@
                     <th>Fecha</th>
                     <th>Supervisor</th>
                 </tr>
-                <tr>
-                    <th>Lorem ipsum quanqum dolorem sit amer per quanqum elinare limicote salana meliowa elieh</th>
-                    <th>02/10/2021</th>
-                    <th>Mario Bros</th>
-                </tr>
+                {%for comment in comments%}
+                    <tr>
+                    {%for column in comment%}
+                    <th>
+                        {{column}}
+                    </th>
+                    {%endfor%}
+                    </tr>
+                {%endfor%}
             </table>
         </div>
     </body>
