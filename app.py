@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 @app.route("/api/v1/cities")
 def get_cities():
-    result = list(map(lambda x: {'id':x[0],'name':x[1]},db.get_cities_list()))
+    result = list(map(lambda x: {'id':x[0],'name':x[1]},
+        db.get_cities_list()))
     return jsonify(result)
 
 @app.route("/api/v1/chains_in_city/<city_id>")
@@ -45,10 +46,13 @@ def view_agent(id):
             pos_info=db.get_agent_pos_info(id),
             topics=db.get_topic_list(),
             trainers=db.get_trainer_list(),
-            supervisors=db.get_supervisor_list())
+            supervisors=db.get_supervisor_list(),
+            enumerate=enumerate)
     else:
         submittraining = request.args.get("submittraining")
         submitcomments = request.args.get("submitcomments")
+        deletetraining = request.args.get("deletetraining")
+        deletecomment = request.args.get("deletecomment")
         if submittraining == "Registrar":
             db.register_training(
                 id,
@@ -61,7 +65,13 @@ def view_agent(id):
             print("registrados")
             db.register_evaluation(id, request.args.get("supervisor"), 
                 request.args.get("date"),request.args.get("comment"))
+        if deletetraining:
+            db.delete_training(deletetraining)
+        if deletecomment:
+            db.delete_evaluation(deletecomment)
         return redirect(f"/viewagent/{id}")
+        
+
 
 @app.route("/")
 def index():

@@ -52,12 +52,18 @@
                 </tr>
                 {%for training in trainings%}
                     <tr>
-                    {%for column in training%}
+                    {%for (i,column) in enumerate(training)%}
                     <th>
+                        {%if i == 4%}
+                        <a class="delete"
+            href="/viewagent/{{personal_info[0]}}?deletetraining={{column}}">
+                            Eliminar
+                        </a>
+                        {%else%}
                         {{column}}
+                        {%endif%}
                     </th>
                     {%endfor%}
-                    <th></th>
                     </tr>
                 {%endfor%}
                 <form>
@@ -109,20 +115,25 @@
                 </tr>
                 {%for comment in comments%}
                     <tr>
-                    {%for column in comment%}
-                    <th>
-                        {{column}}
-                    </th>
+                    {%for (i,column) in enumerate(comment)%}
+                        <th>
+                            {%if i == 3%}
+                            <a class="delete"
+                href="/viewagent/{{personal_info[0]}}?deletecomment={{column}}">
+                                Eliminar
+                            </a>
+                            {%else%}
+                            {{column}}
+                            {%endif%}
+                        </th>
                     {%endfor%}
-                    <th></th>
                     </tr>
                 {%endfor%}
                 <tr>
                     <form>
                     <th>
-                        <textarea id="comment" name="comment" cols="30">
-                            
-                        </textarea>
+                        <textarea id="comment" name="comment" 
+                        cols="30"></textarea>
                     </th>
                     <th>
                         <input id="date" name="date" type="date" 

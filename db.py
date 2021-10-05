@@ -170,6 +170,15 @@ def register_training(agent_id, trainer_id, date, topic_id, grade):
     ((topic_name,),) = CURSOR.fetchall()
     return topic_name
 
+@database_mutator
+def delete_training(training_id):
+    CURSOR.execute(("DELETE FROM training WHERE training.trainingid"
+        " = (%s);"),(training_id,))
+
+@database_mutator
+def delete_evaluation(evaluation_id):
+    CURSOR.execute(("DELETE FROM evaluation WHERE evaluation.evaluationid"
+        " = (%s);"),(evaluation_id,))
 
 @database_mutator
 def register_evaluation(agent_id, supervisor_id, date, comments):
@@ -184,7 +193,7 @@ def register_evaluation(agent_id, supervisor_id, date, comments):
 @database_accesor
 def get_agent_trainings(agent_id):
     CURSOR.execute(("SELECT topicname,traininggrade,trainingdate,"
-        "infoname FROM training "
+        "infoname, trainingid FROM training "
         "INNER JOIN personal_info ON personal_info.infoid = "
         "training.trainingtrainerinfoid "
         "INNER JOIN topic ON topic.topicid = "
@@ -194,8 +203,8 @@ def get_agent_trainings(agent_id):
 
 @database_accesor
 def get_agent_comments(agent_id):
-    CURSOR.execute(("SELECT evaluationcomments,evaluationdate,infoname "
-        "FROM evaluation INNER JOIN personal_info ON "
+    CURSOR.execute(("SELECT evaluationcomments,evaluationdate,infoname,"
+        "evaluationid FROM evaluation INNER JOIN personal_info ON "
         "evaluation.evaluationsupervisorinfoid = personal_info.infoid "
         "WHERE evaluationagentinfoid = (%s);"), (agent_id,))
     return CURSOR.fetchall()

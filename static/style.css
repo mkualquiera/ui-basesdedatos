@@ -5,11 +5,20 @@ html {
     font-size: 2vh;
 }
 
+.delete::before {
+    content: "⌫";
+}
+
+.delete {
+    color: #cb3030;
+}
+
 .add::before {
     content: "➕";
 }
 
 .add {
+    color: #76b343;
     font-size: 3vh;
 }
 
