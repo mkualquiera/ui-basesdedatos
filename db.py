@@ -155,7 +155,17 @@ def get_promoter_comments(promoter_id):
         "FROM evaluation INNER JOIN personal_info ON "
         "evaluation.evaluationsupervisorinfoid = personal_info.infoid "
         "WHERE evaluationpromoterinfoid = (%s);"), (promoter_id,))
-    return CURSOR.fetchall()    
+    return CURSOR.fetchall()
+
+@database_accesor
+def get_promoter_pos_info(promoter_id):
+    CURSOR.execute(("SELECT chainname,cityname,posaddress FROM promoter "
+        "INNER JOIN pos ON pos.posid = promoter.promoterposid "
+        "INNER JOIN city ON pos.poscityid = city.cityid "
+        "INNER JOIN chain ON pos.poschainid = chain.chainid "
+        "WHERE promoterinfoid = (%s);"), (promoter_id,))
+    return CURSOR.fetchall()[0]
+
 
 @database_accesor
 def get_ids():

@@ -9,7 +9,8 @@ def viewpromotor(id):
     return render_template("promoter.html",
         personal_info=db.get_personal_info(id),
         capacitations=db.get_promoter_capacitations(id),
-        comments=db.get_promoter_comments(id))
+        comments=db.get_promoter_comments(id),
+        pos_info=db.get_promoter_pos_info(id))
 
 @app.route("/")
 def index():
